@@ -1,0 +1,1 @@
+import"../chunks/Bzak7iHL.js";import"../chunks/ByDrNN1p.js";import{f as a,a as t}from"../chunks/DN-i7cCk.js";var o=a('<section class="absolute inset-0 flex h-full w-full items-center bg-[#fafafa] p-1"><div class="text-11"><span class="mr-[11.375rem]">404</span> <span>There is nothing here</span></div></section>');function p(s){var e=o();t(s,e)}export{p as component};

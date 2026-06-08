@@ -1,0 +1,13 @@
+section.svelte-tokemk { flex-shrink: 0; height: 50svh; min-height: 20rem; }
+.svelte-tokemk { line-height: 1.09091; }
+span.svelte-tokemk { transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1); }
+@media (hover: hover) {
+  a.svelte-tokemk:hover span:where(.svelte-tokemk) { opacity: 1; }
+}
+section.svelte-16maul2 { flex-shrink: 0; }
+@media (min-width: 768px) {
+  section.svelte-16maul2 { height: 50vh; min-height: 20rem; }
+}
+p.svelte-16maul2 { text-transform: none; line-height: 1.09091; }
+section.svelte-1brxil6 { overscroll-behavior: none; }
+section.svelte-mc5d2l { display: flex; flex-direction: column; }

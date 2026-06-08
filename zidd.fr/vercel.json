@@ -1,0 +1,17 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/research",
+      "destination": "/research.html"
+    },
+    {
+      "source": "/studio",
+      "destination": "/studio.html"
+    },
+    {
+      "source": "/((?!_app|fonts|icons|www.datocms-assets.com|.*\\.).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

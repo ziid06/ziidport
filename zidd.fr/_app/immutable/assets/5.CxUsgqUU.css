@@ -1,0 +1,8 @@
+section.svelte-agyf6p { height: 50svh; min-height: 20rem; }
+p.svelte-agyf6p { text-transform: none; }
+.svelte-agyf6p { line-height: 1.07619; }
+section.svelte-1gmsjdl { background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(1.25rem); }
+@media (min-width: 768px) {
+  section.svelte-1gmsjdl { backdrop-filter: blur(2.5rem); }
+}
+section.svelte-1m5rfom { overscroll-behavior: none; }

@@ -1,0 +1,5 @@
+a.svelte-18wsisj { transition: opacity 0.5s cubic-bezier(0.215, 0.61, 0.355, 1); }
+@media (hover: hover) {
+  a.svelte-18wsisj:hover { opacity: 1; }
+}
+figure.svelte-18wsisj { height: calc(-3.5rem + 50svh); }
