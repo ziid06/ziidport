@@ -2,6 +2,10 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/zidd.fr/:path*",
+      "destination": "/zidd.fr/:path*"
+    },
+    {
       "source": "/research",
       "destination": "/zidd.fr/research.html"
     },
