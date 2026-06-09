@@ -2,10 +2,6 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/zidd.fr/:path*",
-      "destination": "/zidd.fr/:path*"
-    },
-    {
       "source": "/research",
       "destination": "/zidd.fr/research.html"
     },
@@ -14,12 +10,12 @@
       "destination": "/zidd.fr/studio.html"
     },
     {
-      "source": "/((?!_app|fonts|icons|www.datocms-assets.com|.*\\.).*)",
+      "source": "/((?!zidd\\.fr|_app|fonts|icons|www\\.datocms-assets\\.com|.*\\.).*)",
       "destination": "/zidd.fr/index.html"
     },
     {
-      "source": "/:path*",
-      "destination": "/zidd.fr/:path*"
+      "source": "/((?!zidd\\.fr).*)",
+      "destination": "/zidd.fr/$1"
     }
   ]
 }
