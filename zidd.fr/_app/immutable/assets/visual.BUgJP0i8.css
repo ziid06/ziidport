@@ -1,0 +1,7 @@
+.bar.svelte-137gu9q { transition: opacity 0.25s ease-out; }
+button.svelte-137gu9q { cursor: pointer; }
+span.svelte-137gu9q, button.svelte-137gu9q { font-size: 0.6875rem; line-height: 1; text-transform: uppercase; }
+div.svelte-137gu9q > div:where(.svelte-137gu9q) > div:where(.svelte-137gu9q) { background-color: currentcolor; transform: scaleX(0); }
+
+div.svelte-137gu9q > div.svelte-137gu9q { flex: 1 1 0% !important; width: auto !important; }
+button.svelte-137gu9q { flex-shrink: 0 !important; }

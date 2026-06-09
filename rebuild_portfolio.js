@@ -119,7 +119,6 @@ function getProjectInfo(filename) {
   
   const cover = `standalone-projects/${filename}`;
   
-  // Check if a directory with the same name exists in main-projects/
   const subDirPath = path.join(MAIN_PROJECTS_DIR, baseName);
   let visuals = [{ path: cover, videoPath: null }];
   if (fs.existsSync(subDirPath) && fs.statSync(subDirPath).isDirectory()) {
@@ -132,6 +131,8 @@ function getProjectInfo(filename) {
     // Sort them alphabetically/numerically
     imageFiles.sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
     
+    const pairedMp4s = new Set();
+    
     imageFiles.forEach(imgFile => {
       const imgBase = path.basename(imgFile, path.extname(imgFile));
       // Check if a matching .mp4 exists in the same folder
@@ -140,10 +141,26 @@ function getProjectInfo(filename) {
         return ext === '.mp4' && path.basename(f, ext) === imgBase;
       });
       
+      if (mp4File) {
+        pairedMp4s.add(mp4File);
+      }
+      
       visuals.push({
         path: `main-projects/${baseName}/${imgFile}`,
         videoPath: mp4File ? `main-projects/${baseName}/${mp4File}` : null
       });
+    });
+
+    // Handle standalone MP4 files that don't have matching image names
+    const mp4Files = files.filter(f => path.extname(f).toLowerCase() === '.mp4');
+    mp4Files.forEach(mp4File => {
+      if (!pairedMp4s.has(mp4File)) {
+        visuals.push({
+          path: cover,
+          videoPath: `main-projects/${baseName}/${mp4File}`
+        });
+        console.log(`Mapping standalone video: ${mp4File} with cover: ${cover}`);
+      }
     });
   }
 
