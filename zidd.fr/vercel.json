@@ -11,7 +11,7 @@
       "destination": "/_data/:project.json"
     },
     {
-      "source": "/((?!_app/|_data/|.*\\..*).*)",
+      "source": "/(.*)",
       "destination": "/"
     }
   ]
