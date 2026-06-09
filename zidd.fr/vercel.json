@@ -1,6 +1,15 @@
 {
   "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
+    {
+      "source": "/research",
+      "destination": "/research.html"
+    },
+    {
+      "source": "/studio",
+      "destination": "/studio.html"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
