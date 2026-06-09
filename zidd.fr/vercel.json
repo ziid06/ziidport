@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!_app/|_data/|.*\\..*).*)",
       "destination": "/"
     }
   ]
