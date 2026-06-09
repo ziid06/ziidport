@@ -131,35 +131,38 @@ function getProjectInfo(filename) {
     // Sort them alphabetically/numerically
     imageFiles.sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
     
-    const pairedMp4s = new Set();
+    const pairedMedias = new Set();
     
     imageFiles.forEach(imgFile => {
       const imgBase = path.basename(imgFile, path.extname(imgFile));
-      // Check if a matching .mp4 exists in the same folder
-      const mp4File = files.find(f => {
+      // Check if a matching .mp4 or .mp3 exists in the same folder
+      const mediaFile = files.find(f => {
         const ext = path.extname(f).toLowerCase();
-        return ext === '.mp4' && path.basename(f, ext) === imgBase;
+        return (ext === '.mp4' || ext === '.mp3') && path.basename(f, ext) === imgBase;
       });
       
-      if (mp4File) {
-        pairedMp4s.add(mp4File);
+      if (mediaFile) {
+        pairedMedias.add(mediaFile);
       }
       
       visuals.push({
         path: `main-projects/${baseName}/${imgFile}`,
-        videoPath: mp4File ? `main-projects/${baseName}/${mp4File}` : null
+        videoPath: mediaFile ? `main-projects/${baseName}/${mediaFile}` : null
       });
     });
 
-    // Handle standalone MP4 files that don't have matching image names
-    const mp4Files = files.filter(f => path.extname(f).toLowerCase() === '.mp4');
-    mp4Files.forEach(mp4File => {
-      if (!pairedMp4s.has(mp4File)) {
+    // Handle standalone MP4/MP3 files that don't have matching image names
+    const mediaFiles = files.filter(f => {
+      const ext = path.extname(f).toLowerCase();
+      return ext === '.mp4' || ext === '.mp3';
+    });
+    mediaFiles.forEach(mediaFile => {
+      if (!pairedMedias.has(mediaFile)) {
         visuals.push({
           path: cover,
-          videoPath: `main-projects/${baseName}/${mp4File}`
+          videoPath: `main-projects/${baseName}/${mediaFile}`
         });
-        console.log(`Mapping standalone video: ${mp4File} with cover: ${cover}`);
+        console.log(`Mapping standalone media: ${mediaFile} with cover: ${cover}`);
       }
     });
   }
@@ -194,7 +197,8 @@ const projectsArray = projectDefinitions.map((proj, idx) => {
 
     let videoObj = null;
     if (vis.videoPath) {
-      const videoFilename = `custom-video-${slug}-${visIdx}.mp4`;
+      const mediaExt = path.extname(vis.videoPath).toLowerCase();
+      const videoFilename = `custom-video-${slug}-${visIdx}${mediaExt}`;
       const videoUrl = `https://www.datocms-assets.com/127841/${videoFilename}`;
       newMappings[videoFilename] = vis.videoPath;
       
