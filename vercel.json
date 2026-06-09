@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/research",
+      "destination": "/zidd.fr/research.html"
+    },
+    {
+      "source": "/studio",
+      "destination": "/zidd.fr/studio.html"
+    },
+    {
+      "source": "/((?!_app|fonts|icons|www.datocms-assets.com|.*\\.).*)",
+      "destination": "/zidd.fr/index.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/zidd.fr/:path*"
+    }
+  ]
+}
