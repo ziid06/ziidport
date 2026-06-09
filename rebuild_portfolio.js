@@ -780,7 +780,10 @@ function buildForVercel() {
   }
   const allTags = indexData.data[0].data.tags.allTags;
 
-  // 3b. Generate root __data.json and index/__data.json
+  // 3b. Generate root _data directory and save all static data payloads there
+  const dataDestDir = path.join(WEB_DIR, '_data');
+  fs.mkdirSync(dataDestDir, { recursive: true });
+
   const homeResObj = {
     type: "data",
     nodes: [
@@ -794,15 +797,11 @@ function buildForVercel() {
   };
   let homeJsonStr = JSON.stringify(homeResObj) + '\n';
   homeJsonStr = homeJsonStr.replace(/https:\/\/www\.datocms-assets\.com\//g, '/www.datocms-assets.com/');
-  fs.writeFileSync(path.join(WEB_DIR, '__data.json'), homeJsonStr, 'utf8');
-  console.log('Generated root __data.json');
+  fs.writeFileSync(path.join(dataDestDir, 'home.json'), homeJsonStr, 'utf8');
+  fs.writeFileSync(path.join(dataDestDir, 'index.json'), homeJsonStr, 'utf8');
+  console.log('Generated _data/home.json and _data/index.json');
 
-  const indexDestDir = path.join(WEB_DIR, 'index');
-  fs.mkdirSync(indexDestDir, { recursive: true });
-  fs.writeFileSync(path.join(indexDestDir, '__data.json'), homeJsonStr, 'utf8');
-  console.log('Generated index/__data.json');
-
-  // 4. Generate research/__data.json
+  // 4. Generate _data/research.json
   const researchData = parseKitStartStatic('research.html');
   if (researchData) {
     const resObj = {
@@ -816,15 +815,13 @@ function buildForVercel() {
         }
       ]
     };
-    const destDir = path.join(WEB_DIR, 'research');
-    fs.mkdirSync(destDir, { recursive: true });
     let jsonStr = JSON.stringify(resObj) + '\n';
     jsonStr = jsonStr.replace(/https:\/\/www\.datocms-assets\.com\//g, '/www.datocms-assets.com/');
-    fs.writeFileSync(path.join(destDir, '__data.json'), jsonStr, 'utf8');
-    console.log('Generated research/__data.json');
+    fs.writeFileSync(path.join(dataDestDir, 'research.json'), jsonStr, 'utf8');
+    console.log('Generated _data/research.json');
   }
 
-  // 5. Generate studio/__data.json
+  // 5. Generate _data/studio.json
   const studioData = parseKitStartStatic('studio.html');
   if (studioData) {
     const resObj = {
@@ -838,20 +835,20 @@ function buildForVercel() {
         }
       ]
     };
-    const destDir = path.join(WEB_DIR, 'studio');
-    fs.mkdirSync(destDir, { recursive: true });
     let jsonStr = JSON.stringify(resObj) + '\n';
     jsonStr = jsonStr.replace(/https:\/\/www\.datocms-assets\.com\//g, '/www.datocms-assets.com/');
-    fs.writeFileSync(path.join(destDir, '__data.json'), jsonStr, 'utf8');
-    console.log('Generated studio/__data.json');
+    fs.writeFileSync(path.join(dataDestDir, 'studio.json'), jsonStr, 'utf8');
+    console.log('Generated _data/studio.json');
   }
 
-  // 6. Generate [slug]/__data.json for each custom project in projects_db.json
+  // 6. Generate _data/[slug].json for each custom project in projects_db.json
+  const oldDirectories = ['index', 'research', 'studio', '__data.json'];
   if (fs.existsSync(PROJECTS_DB_FILE)) {
     try {
       const fullProjects = JSON.parse(fs.readFileSync(PROJECTS_DB_FILE, 'utf8'));
       fullProjects.forEach(proj => {
         const slug = proj.slug;
+        oldDirectories.push(slug);
         const resObj = {
           type: "data",
           nodes: [
@@ -868,21 +865,39 @@ function buildForVercel() {
             }
           ]
         };
-        const destDir = path.join(WEB_DIR, slug);
-        fs.mkdirSync(destDir, { recursive: true });
         let jsonStr = JSON.stringify(resObj) + '\n';
         jsonStr = jsonStr.replace(/https:\/\/www\.datocms-assets\.com\//g, '/www.datocms-assets.com/');
-        fs.writeFileSync(path.join(destDir, '__data.json'), jsonStr, 'utf8');
-        console.log(`Generated ${slug}/__data.json`);
+        fs.writeFileSync(path.join(dataDestDir, `${slug}.json`), jsonStr, 'utf8');
+        console.log(`Generated _data/${slug}.json`);
       });
     } catch (err) {
       console.error('Error generating project data files for Vercel:', err.message);
     }
   }
 
+  // 7. Cleanup legacy files/directories from previous versions to avoid Vercel directory conflict 404s
+  oldDirectories.forEach(p => {
+    const fullPath = path.join(WEB_DIR, p);
+    if (fs.existsSync(fullPath)) {
+      try {
+        const stat = fs.statSync(fullPath);
+        if (stat.isDirectory()) {
+          fs.rmSync(fullPath, { recursive: true, force: true });
+          console.log(`Cleaned up legacy directory: ${p}`);
+        } else {
+          fs.unlinkSync(fullPath);
+          console.log(`Cleaned up legacy file: ${p}`);
+        }
+      } catch (err) {
+        console.error(`Error cleaning up legacy path ${p}:`, err.message);
+      }
+    }
+  });
+
   // 7. Write vercel.json config file to zidd.fr/
   const vercelConfig = {
     "cleanUrls": true,
+    "trailingSlash": false,
     "rewrites": [
       {
         "source": "/research",
@@ -893,7 +908,7 @@ function buildForVercel() {
         "destination": "/studio.html"
       },
       {
-        "source": "/:path*",
+        "source": "/(.*)",
         "destination": "/index.html"
       }
     ]
