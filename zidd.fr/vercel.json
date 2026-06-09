@@ -3,16 +3,19 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/research",
-      "destination": "/research.html"
+      "source": "/__data.json",
+      "destination": "/_data/index.json"
     },
     {
-      "source": "/studio",
-      "destination": "/studio.html"
-    },
+      "source": "/(?<project>.+)/__data.json",
+      "destination": "/_data/$project.json"
+    }
+  ],
+  "redirects": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/(?<path>(?!_app/|_data/|research|studio|.*\\..*).*)",
+      "destination": "/",
+      "permanent": false
     }
   ]
 }
