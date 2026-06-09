@@ -9,13 +9,10 @@
     {
       "source": "/(?<project>.+)/__data.json",
       "destination": "/_data/$project.json"
-    }
-  ],
-  "redirects": [
+    },
     {
-      "source": "/(?<path>(?!_app/|_data/|research|studio|.*\\..*).*)",
-      "destination": "/",
-      "permanent": false
+      "source": "/(?<path>(?!_app/|_data/|.*\\..*).*)",
+      "destination": "/"
     }
   ]
 }
