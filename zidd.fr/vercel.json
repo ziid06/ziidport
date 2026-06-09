@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/__data.json",
+      "destination": "/_data/index.json"
+    },
+    {
+      "source": "/(.*)/__data.json",
+      "destination": "/_data/$1.json"
+    },
+    {
       "source": "/((?!_app/|_data/|.*\\..*).*)",
       "destination": "/"
     }
