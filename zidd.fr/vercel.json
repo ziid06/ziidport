@@ -2,15 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/research",
-      "destination": "/research.html"
-    },
-    {
-      "source": "/studio",
-      "destination": "/studio.html"
-    },
-    {
-      "source": "/:path*",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
