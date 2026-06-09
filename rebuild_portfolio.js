@@ -893,7 +893,7 @@ function buildForVercel() {
         "destination": "/studio.html"
       },
       {
-        "source": "/((?!_app|fonts|icons|www.datocms-assets.com|.*\\.).*)",
+        "source": "/:path((?!_app|fonts|icons|www\\.datocms-assets\\.com|.*\\.).*)",
         "destination": "/index.html"
       }
     ]
