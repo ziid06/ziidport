@@ -7,11 +7,11 @@
       "destination": "/_data/index.json"
     },
     {
-      "source": "/(.*)/__data.json",
-      "destination": "/_data/$1.json"
+      "source": "/(?<project>.+)/__data.json",
+      "destination": "/_data/$project.json"
     },
     {
-      "source": "/((?!_app/|_data/|.*\\..*).*)",
+      "source": "/(?<path>(?!_app/|_data/|.*\\..*).*)",
       "destination": "/"
     }
   ]
