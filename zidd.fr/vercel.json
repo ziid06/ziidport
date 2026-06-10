@@ -7,12 +7,28 @@
       "destination": "/_data/index.json"
     },
     {
+      "source": "/research/__data.json",
+      "destination": "/_data/research.json"
+    },
+    {
+      "source": "/studio/__data.json",
+      "destination": "/_data/studio.json"
+    },
+    {
       "source": "/:project/__data.json",
       "destination": "/_data/:project.json"
     },
     {
+      "source": "/research",
+      "destination": "/research.html"
+    },
+    {
+      "source": "/studio",
+      "destination": "/studio.html"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "/index.html"
     }
   ]
 }

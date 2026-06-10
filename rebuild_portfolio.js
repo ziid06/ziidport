@@ -846,6 +846,26 @@ function buildForVercel() {
   if (fs.existsSync(PROJECTS_DB_FILE)) {
     try {
       const fullProjects = JSON.parse(fs.readFileSync(PROJECTS_DB_FILE, 'utf8'));
+      
+      // Clean up any old project .html files that are no longer in projects_db.json
+      const currentSlugs = new Set(fullProjects.map(p => p.slug));
+      const webFiles = fs.readdirSync(WEB_DIR);
+      webFiles.forEach(file => {
+        if (file.endsWith('.html')) {
+          const nameWithoutExt = path.basename(file, '.html');
+          if (nameWithoutExt !== 'index' && nameWithoutExt !== 'research' && nameWithoutExt !== 'studio' && !file.endsWith('.bak')) {
+            if (!currentSlugs.has(nameWithoutExt)) {
+              try {
+                fs.unlinkSync(path.join(WEB_DIR, file));
+                console.log(`Cleaned up legacy project HTML file: ${file}`);
+              } catch (e) {
+                console.error(`Error deleting legacy project HTML file ${file}:`, e.message);
+              }
+            }
+          }
+        }
+      });
+
       fullProjects.forEach(proj => {
         const slug = proj.slug;
         oldDirectories.push(slug);
@@ -869,9 +889,45 @@ function buildForVercel() {
         jsonStr = jsonStr.replace(/https:\/\/www\.datocms-assets\.com\//g, '/www.datocms-assets.com/');
         fs.writeFileSync(path.join(dataDestDir, `${slug}.json`), jsonStr, 'utf8');
         console.log(`Generated _data/${slug}.json`);
+
+        // Generate [slug].html for each project to support direct reload / refresh in Vercel
+        const indexPath = path.join(WEB_DIR, 'index.html');
+        if (fs.existsSync(indexPath)) {
+          const indexHtml = fs.readFileSync(indexPath, 'utf8');
+          const htmlMatch = indexHtml.match(/kit\.start\(app, element, (\{[\s\S]*?\})\);/);
+          if (htmlMatch) {
+            try {
+              const htmlObj = eval('(' + htmlMatch[1] + ')');
+              // Rewrite SvelteKit options to load project page (node 3) instead of homepage (node 2)
+              htmlObj.node_ids = [0, 3];
+              // Replace page data from "home" to "project"
+              htmlObj.data[1].data = {
+                project: { project: proj },
+                page: { page: null },
+                tags: { allTags: allTags },
+                key: `custom-project-${slug}`
+              };
+              
+              const updatedHtmlObjStr = JSON.stringify(htmlObj, null, 2);
+              const htmlReplacement = `kit.start(app, element, ${updatedHtmlObjStr});`;
+              const htmlOriginal = `kit.start(app, element, ${htmlMatch[1]});`;
+              
+              let projectHtml = indexHtml.replace(htmlOriginal, htmlReplacement);
+              // Clear pre-rendered body content to avoid hydration crash
+              projectHtml = projectHtml.replace(/<div style="display: contents">[\s\S]*?<script>/i, '<div style="display: contents"><script>');
+              // Rewrite absolute datocms assets
+              projectHtml = projectHtml.replace(/https:\/\/www\.datocms-assets\.com\//g, '/www.datocms-assets.com/');
+              
+              fs.writeFileSync(path.join(WEB_DIR, `${slug}.html`), projectHtml, 'utf8');
+              console.log(`Generated HTML file: ${slug}.html`);
+            } catch (e) {
+              console.error(`Error generating ${slug}.html:`, e.message);
+            }
+          }
+        }
       });
     } catch (err) {
-      console.error('Error generating project data files for Vercel:', err.message);
+      console.error('Error generating project data/html files for Vercel:', err.message);
     }
   }
 
@@ -894,11 +950,27 @@ function buildForVercel() {
     }
   });
 
-  // 7. Write vercel.json config file to zidd.fr/
+  // 8. Write vercel.json config file to zidd.fr/
   const vercelConfig = {
     "cleanUrls": true,
     "trailingSlash": false,
     "rewrites": [
+      {
+        "source": "/__data.json",
+        "destination": "/_data/index.json"
+      },
+      {
+        "source": "/research/__data.json",
+        "destination": "/_data/research.json"
+      },
+      {
+        "source": "/studio/__data.json",
+        "destination": "/_data/studio.json"
+      },
+      {
+        "source": "/:project/__data.json",
+        "destination": "/_data/:project.json"
+      },
       {
         "source": "/research",
         "destination": "/research.html"
